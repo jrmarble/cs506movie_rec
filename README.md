@@ -120,7 +120,7 @@ This graph showcases the top rated movies in the dataset:
 ### Evaluations
 - Each random query features similarity scores that range from 0 to 1. Overall, the model struggles to reach similarity scores far above .41, and seems to peak at .42 (see example below for user 476).
 
-  \csv(recommendations/user_476_recommendations.csv)()
+  !(\csv(recommendations/user_476_recommendations.csv)())
 
 #### Similarity Matrix
 
