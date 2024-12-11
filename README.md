@@ -1,66 +1,137 @@
 # Movie Recommendation System
 
-## Project Overview
-This project aims to create a machine learning-powered movie recommendation system that suggests movies to users based on their viewing preferences. The system will analyze user interactions, such as ratings, along with movie metadata to provide personalized recommendations.
+This repository implements a **Movie Recommendation System** using **content-based filtering** techniques, developed with the MovieLens dataset. This document provides a structured overview of how to build, run, test, and interpret the results of the system, accompanied by visualizations and key findings.
 
-## Goals
-- Develop a recommendation system that predicts user movie preferences based on past interactions.
-- Compare different recommendation techniques such as collaborative filtering, content-based filtering, and hybrid models.
-- Measure performance using metrics like Mean Squared Error (MSE), Precision, and Recall.
+---
 
-## Data Collection
-The data is be sourced from the [MovieLens](https://grouplens.org/datasets/movielens/) small dataset. This dataset includes:
-- User ratings and interactions.
-- Movie metadata (e.g., genre, release year).
-- User demographic information (age, gender, etc.).
+## How to Build and Run the Code
 
-The data contains 100,000 ratings and 3,600 tag applications applied to 9,000 movies by 600 users.
+### Prerequisites
+1. Ensure Python 3.8 or higher is installed.
+2. Clone this repository to your local machine:
+   ```bash
+   git clone https://github.com/jrmarble/cs506movie_rec.git
+   ```
+3. Install the required Python dependencies:
+   ```bash
+   make install
+   ```
 
-## Data Preprocessing and Feature Engineering
-Several data preprocessing steps were taken to improve data quality and reduce noise:
-- **Filtering Active Users**: Removed users who had fewer than 10 reviews to minimize noise.
-- **One-Hot Encoding Genres**: Transformed genre information into a binary format using one-hot encoding, allowing us to use genres as features in our content-based model.
-- **Tag Processing with TF-IDF**: Used TF-IDF vectorization to convert tags into weighted features, helping to capture unique descriptive terms for each movie.
+### Building the Code
+The system is modularized into distinct phases: preprocessing, training, recommendation generation, and visualization. To build and prepare the system execute:
+
+```bash
+make all
+```
+
+This process will:
+
+- Preprocess the MovieLens dataset, generating stratified training and testing datasets.
+- Train the recommendation model and generate the content-based similarity matrix.
+
+### Running the Recommendation System
+To generate recommendations for a random user, run:
+
+```bash
+make recommend
+```
+
+The output will include:
+
+- The user's previously rated movies and their corresponding ratings.
+- A list of recommended movies with similarity scores. The similarity scores reflect how closely the recommended movie aligns with the user’s preferences, weighted by the ratings given to similar movies.
+- In addition to showing up in your terminal, the random user's output and the corresponding similarity scores are stored in the "recomendations" folder.
+
+---
+
+## Test Code and GitHub Workflow
+
+### Unit Tests
+Unit tests cover key components of the system, including:
+
+- Data preprocessing.
+- Training the content-based similarity model.
+- Generating recommendations.
+
+Run the complete test suite with:
+
+```bash
+make test
+```
+
+### Continuous Integration
+The repository integrates GitHub Actions for continuous integration:
+
+- Automatically installs dependencies.
+- Runs the test suite to ensure correctness and reliability of the system.
+
+---
+
+## Visualizations
+
+### Insights from the Data
+
+#### Distribution of Ratings
+
+This graph displays the frequency of movie ratings, highlighting the general distribution of user preferences: ![img not found](graph/rating_dist.png)
+
+#### Genre Popularity
+
+This bar chart shows the number of movies available across various genres: ![img not found](graph/genre_frequency.png)
+
+#### User Activity
+
+This graph showcases the top rated movies in the dataset: 
+![img not found](top_ratings.png)
+
+#### Inferences from Data
 
 
-## Data Visualization
-We used various visualizations to explore the dataset and gain insights:
-- **Rating Distribution**: Bar chart showing the distribution of ratings, indicating common rating biases.
-- **Most Rated Movies**: Bar chart of the top 20 most-rated movies, highlighting popular titles.
-- **Average Rating per Genre**: Bar chart showing the average user rating for each genre, providing insights into user preferences.
 
-## Modeling Approach
-The project currently explores the following recommendation techniques:
+---
 
-### 1. Content-Based Filtering
-Using movie genres and user-provided tags as features, this approach recommends movies based on the similarity of content features:
-- **Genres**: Encoded using one-hot encoding to allow binary comparisons.
-- **Tags**: Processed with TF-IDF to assign weights to frequently used terms.
-- **Similarity Computation**: Used cosine similarity between movies to identify similar titles for recommendation.
+## Data Processing and Modeling
 
-### 2. Collaborative Filtering (To Be Implemented)
-We plan to implement collaborative filtering to leverage patterns in user behavior and ratings, aiming to recommend movies based on what similar users have rated highly.
+### Data Preprocessing
+- Users with less than 10 films watched are removed from the dataset, ensuring our model is trained on reliable and detailed data.
+- Splits the dataset into training (80%) and testing (20%) sets using stratified sampling based on movie ratings. At one point, an approach was considered where the data would be split by users. However, this is not ideal for content-based filtering and the model struggled to recommend movies when users could not be identified in the matrix.
+- Creates:
+  - A user-item matrix for collaborative filtering.
+  - A content-based similarity matrix by combining movie genres with TF-IDF-processed tags.
 
-### 3. Hybrid Models (Future Direction)
-Once content-based and collaborative filtering models are functional, we aim to combine them into a hybrid model to enhance recommendation accuracy.
+### Training and Recommendation Generation
 
+#### Content-Based Filtering:
 
-### Future Techniques
-- **Matrix Factorization (SVD)**: We may explore matrix factorization to reduce dimensionality and uncover latent factors in user-movie interactions.
-- **Neural Collaborative Filtering**: Potential future work to leverage deep learning for more complex interactions.
+- Uses cosine similarity between movies based on genres and tags. In effect, users will be mapped to recommended films based on their logged film's realtionships with other movies.
 
-## Preliminary Results
-- **Content-Based Filtering**: Initial recommendations from the content-based model are promising, especially for users with strong genre preferences. Recommendations are based on genre and tag similarity, which aligns with user interests in specific themes or topics.
-- **Metrics**: We evaluated initial content-based recommendations using Mean Squared Error (MSE) as an indicator, though further evaluation with Precision and Recall will be performed after implementing collaborative and hybrid models.
+---
 
-## Test Plan
-- **Data Split**: The dataset is split into training (80%) and testing (20%) sets to evaluate model performance.
-- **Evaluation Metrics**: Current models are evaluated using MSE. For content-based recommendations, further qualitative evaluation will be conducted by assessing genre and tag alignment with user interests.
-- **Cross-Validation**: Cross-validation will be used to validate the robustness of future models, ensuring they generalize well across different user subsets.
+## Results
 
-## Timeline
-- **Midterm Completion**: All data preprocessing, visualization, and initial content-based filtering methods are complete.
-- **Future Steps**: The next phase will involve implementing collaborative filtering, refining content-based filtering, and testing hybrid approaches. I aim to complete testing and evaluation of all methods by the final deadline.
+### Evaluations
+- Each random query features similarity scores that range from 0 to 1. Overall, the model struggles to reach similarity scores far above .41, and seems to peak at .42 (see example below for user 476).
 
-## Midterm demo link
-[YouTube Presentation Link](https://www.youtube.com/watch?v=RM6n39x6xuA)  
+#### Similarity Matrix
+
+A heatmap of the movie similarity matrix generated during training. This visualization demonstrates relationships between movies based on their genres and tags: 
+![img not found](graph/similarity_matrix.png)
+
+### Key Observations
+- The content-based approach recommends movies similar to those the user already enjoys.
+- The lack of features such as cast, crew, studio, etc. in the MovieLens dataset (we are restricted to info on genre and rating) is restrictive for building a predictive model. A model using a database with more features could be more sophisticated and provide recommendations with greater similarity. 
+- Sparse user-item interactions occasionally limit the model’s ability to provide novel recommendations. Users with a greater number of logged films have recommendations with noticably more larger and unique similarity scores, whereas a user with only 10 logged films may have a less sophisticed output of films all featuring identical scores.
+
+---
+
+## Conclusion
+
+This Movie Recommendation System successfully combines content-based filtering techniques on genre and quality to deliver user-specific movie recommendations.
+
+### Future Directions
+Potential enhancements include:
+
+- Exploring hybrid models, such as integrating a collaborative-based approach to balance recommendation diversity and relevance.
+- Using a more detailed dataset with better features to increase accuracy.
+
+The system demonstrates consistent classification results and provides a strong foundation for further improvement in similar recommendation systems.
