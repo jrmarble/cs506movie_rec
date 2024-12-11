@@ -21,7 +21,8 @@ This repository implements a **Movie Recommendation System** using **content-bas
 The system is modularized into distinct phases: preprocessing, training, recommendation generation, and visualization. To build and prepare the system execute:
 
 ```bash
-make all
+make preprocess
+make train
 ```
 
 This process will:
@@ -41,6 +42,13 @@ The output will include:
 - The user's previously rated movies and their corresponding ratings.
 - A list of recommended movies with similarity scores. The similarity scores reflect how closely the recommended movie aligns with the user’s preferences, weighted by the ratings given to similar movies.
 - In addition to showing up in your terminal, the random user's output and the corresponding similarity scores are stored in the "recomendations" folder.
+
+### Generate Visuals
+To generate visualizations for our data, run:
+
+```bash
+make visualize
+```
 
 ---
 
@@ -82,7 +90,7 @@ This bar chart shows the number of movies available across various genres: ![img
 #### User Activity
 
 This graph showcases the top rated movies in the dataset: 
-![img not found](top_ratings.png)
+![img not found](graph/top_ratings.png)
 
 #### Inferences from Data
 
